@@ -1,4 +1,4 @@
-import urllib
+import urllib.request
 
 # Ignore pre-production warnings
 import warnings
@@ -10,7 +10,8 @@ import nemo.collections.asr as nemo_asr
 import nemo.collections.nlp as nemo_nlp
 
 Audio_sample = '2086-149220-0033.wav'
-urllib.urlretrieve ("https://dldata-public.s3.us-east-2.amazonaws.com/2086-149220-0033.wav", Audio_sample)
+
+urllib.request.urlretrieve("https://dldata-public.s3.us-east-2.amazonaws.com/2086-149220-0033.wav", Audio_sample)
 
 # Instantiate pre-trained NeMo models
 # Speech Recognition model - QuartzNet

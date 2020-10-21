@@ -1,4 +1,7 @@
-FROM nvcr.io/nvidia/nemo:v1.0.0b1
+
+FROM pytorch/pytorch:1.5.1-cuda10.1-cudnn7-devel
+
+RUN apt-get update && apt-get install -y libsndfile1 ffmpeg
 
 WORKDIR /app
 
