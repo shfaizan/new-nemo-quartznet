@@ -10,7 +10,7 @@ import nemo.collections.nlp as nemo_nlp
 
 # Instantiate pre-trained NeMo models
 # Speech Recognition model - QuartzNet
-quartznet = nemo_asr.models.EncDecCTCModel.from_pretrained(model_name="QuartzNet15x5Base-En").cuda()
+quartznet = nemo_asr.models.EncDecCTCModel.from_pretrained(model_name="QuartzNet15x5NR-En").cuda()
 # Punctuation and capitalization model
 punctuation = nemo_nlp.models.PunctuationCapitalizationModel.from_pretrained(model_name='Punctuation_Capitalization_with_DistilBERT').cuda()
 
