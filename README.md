@@ -1,7 +1,7 @@
 ## RUN IMAGE FROM GHCR 
 
 ```sh
-docker run -it --env-file .env ghcr.io/semantic-search/max_audio_classifier:latest
+docker run -it --env-file .env new-nemo
 ```
 
 - Make sure you have `.env` file with following parameters

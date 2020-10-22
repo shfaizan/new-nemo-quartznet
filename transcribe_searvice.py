@@ -1,3 +1,4 @@
+import os
 # Ignore pre-production warnings
 import warnings
 warnings.filterwarnings('ignore')
@@ -27,5 +28,7 @@ def transcribe(file_name):
     res = punctuation.add_punctuation_capitalization(queries=[raw_text])
     text = res[0]
     print(f'\nRaw recognized text: {raw_text}. \nText with capitalization and punctuation: {text}')
+
+    os.remove(file_name)
 
     return text 
