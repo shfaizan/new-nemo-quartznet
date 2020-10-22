@@ -1,2 +1,6 @@
 Cython
 nemo_toolkit[all]==1.0.0b1
+kafka-python
+redis
+python-dotenv
+mongoengine
