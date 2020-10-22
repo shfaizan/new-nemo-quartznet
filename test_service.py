@@ -1,4 +1,5 @@
 
+from transcribe_searvice import transcribe
 import urllib.request
 import os
 # Ignore pre-production warnings
@@ -14,22 +15,4 @@ Audio_sample = '2086-149220-0033.wav'
 
 urllib.request.urlretrieve("https://dldata-public.s3.us-east-2.amazonaws.com/2086-149220-0033.wav", Audio_sample)
 
-# Instantiate pre-trained NeMo models
-# Speech Recognition model - QuartzNet
-quartznet = nemo_asr.models.EncDecCTCModel.from_pretrained(model_name="QuartzNet15x5Base-En").cuda()
-# Punctuation and capitalization model
-punctuation = nemo_nlp.models.PunctuationCapitalizationModel.from_pretrained(model_name='Punctuation_Capitalization_with_DistilBERT').cuda()
-
-# Convert our audio sample to text
-files = [Audio_sample]
-raw_text = ''
-text = ''
-for fname, transcription in zip(files, quartznet.transcribe(paths2audio_files=files)):
-  raw_text = transcription
-
-os.remove(Audio_sample)
-
-# Add capitalization and punctuation
-res = punctuation.add_punctuation_capitalization(queries=[raw_text])
-text = res[0]
-print(f'\nRaw recognized text: {raw_text}. \nText with capitalization and punctuation: {text}')
+transcribe(Audio_sample)
