@@ -1,7 +1,8 @@
 ## RUN IMAGE FROM GHCR 
 
 ```sh
-docker run -it --env-file .env new-nemo
+docker run -it --env-file .env ghcr.io/semantic-search/new-nemo-quartznet:latest
+
 ```
 
 - Make sure you have `.env` file with following parameters
@@ -23,15 +24,15 @@ CLIENT_ID=151515
 To build the docker image locally, run: 
 
 ```git
-    git clone --recurse-submodules https://github.com/semantic-search/max-audio-classifier.git
+    git clone --recurse-submodules https://github.com/semantic-search/new-nemo-quartznet.git
 ```
 
 ```
-docker build -t max-audio-classifier .
+docker build -t new-nemo-quartznet .
 ```
 
 ```
-docker run -it  --env-file .env max-audio-classifier
+docker run -it  --env-file .env new-nemo-quartznet
 ```
 
 
