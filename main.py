@@ -55,8 +55,6 @@ if __name__ == "__main__":
             continue
 
         file_name = db_object.file_name
-        final_labels=db_object.labels
-        final_scores=db_object.scores
         print("#############################################")
         print("########## PROCESSING FILE " + file_name)
         print("#############################################")
