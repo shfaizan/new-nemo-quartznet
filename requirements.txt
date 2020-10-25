@@ -4,3 +4,4 @@ kafka-python
 redis
 python-dotenv
 mongoengine
+python-logstash-async
