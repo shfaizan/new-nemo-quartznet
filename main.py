@@ -5,6 +5,7 @@ from transcribe_searvice import transcribe
 import globals
 import requests
 from init import ERR_LOGGER
+import os
 
 global_init()
 
@@ -67,6 +68,7 @@ if __name__ == "__main__":
         except Exception as e:
             print("ERROR IN PREDICE")
             ERR_LOGGER(f"{e} Exception in predict FILE ID {FILE_ID}")
+            os.remove(file_name)
             continue
         print("to_save", response)
         save_to_db(db_object, response)
