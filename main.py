@@ -1,76 +1,32 @@
-from db_models.mongo_setup import global_init
-from db_models.models.cache_model import Cache
-import init
-from transcribe_searvice import transcribe
-import globals
-import requests
-from init import ERR_LOGGER
-import os
+import urllib.request
 
-global_init()
+# Ignore pre-production warnings
+import warnings
+warnings.filterwarnings('ignore')
+import nemo
+# Import Speech Recognition collection
+import nemo.collections.asr as nemo_asr
+# Import Natural Language Processing colleciton
+import nemo.collections.nlp as nemo_nlp
 
-FILE_ID = ""
+Audio_sample = '2086-149220-0033.wav'
 
-def save_to_db(db_object, result_to_save):
-    try:
-        print("*****************SAVING TO DB******************************")
-        if db_object.text:
-            db_object.text = db_object.text + ' ' + result_to_save
-        else:
-            db_object.text = result_to_save
-        db_object.save()
-        print("*****************SAVED TO DB******************************")
-    except Exception as e:
-        print(f"{e} ERROR IN SAVE TO DB FILE ID {FILE_ID}")
-        ERR_LOGGER(f"{e} ERROR IN SAVE TO DB FILE ID {FILE_ID}")
+urllib.request.urlretrieve("https://dldata-public.s3.us-east-2.amazonaws.com/2086-149220-0033.wav", Audio_sample)
 
-def update_state(file_name):
-    payload = {
-        'parent_name': globals.PARENT_NAME,
-        'group_name': globals.GROUP_NAME,
-        'container_name': globals.RECEIVE_TOPIC,
-        'file_name': file_name,
-        'client_id': globals.CLIENT_ID
-    }
-    try:
-        requests.request("POST", globals.DASHBOARD_URL,  data=payload)
-    except Exception as e:
-        print(f"{e} EXCEPTION IN UPDATE STATE API CALL......")
-        ERR_LOGGER(f"{e} EXCEPTION IN UPDATE STATE API CALL......FILE ID {FILE_ID}")
+# Instantiate pre-trained NeMo models
+# Speech Recognition model - QuartzNet
+quartznet = nemo_asr.models.EncDecCTCModel.from_pretrained(model_name="QuartzNet15x5Base-En").cuda()
+# Punctuation and capitalization model
+punctuation = nemo_nlp.models.PunctuationCapitalizationModel.from_pretrained(model_name='Punctuation_Capitalization_with_DistilBERT').cuda()
 
+# Convert our audio sample to text
+files = [Audio_sample]
+raw_text = ''
+text = ''
+for fname, transcription in zip(files, quartznet.transcribe(paths2audio_files=files)):
+  raw_text = transcription
 
-if __name__ == "__main__":
-    print('main fxn')
-    print("Connected to Kafka at " + globals.KAFKA_HOSTNAME + ":" + globals.KAFKA_PORT)
-    print("Kafka Consumer topic for this Container is " + globals.RECEIVE_TOPIC)
-    for message in init.consumer_obj:
-        message = message.value
-        db_key = str(message)
-        print(db_key, 'db_key')
-        FILE_ID = db_key
-        try:
-            db_object = Cache.objects.get(pk=db_key)
-        except Exception as e:
-            print("EXCEPTION IN GET PK... continue")
-            ERR_LOGGER(f"{e} EXCEPTION IN GET PK... continue")
-            continue
-
-        file_name = db_object.file_name
-        print("#############################################")
-        print("########## PROCESSING FILE " + file_name)
-        print("#############################################")
-
-       
-        with open(file_name, 'wb') as file_to_save:
-            file_to_save.write(db_object.file.read())
-        try:
-            response = transcribe(file_name)
-        except Exception as e:
-            print("ERROR IN PREDICE")
-            ERR_LOGGER(f"{e} Exception in predict FILE ID {FILE_ID}")
-            os.remove(file_name)
-            continue
-        print("to_save", response)
-        save_to_db(db_object, response)
-        print(".....................FINISHED PROCESSING FILE.....................")
-        update_state(file_name)
+# Add capitalization and punctuation
+res = punctuation.add_punctuation_capitalization(queries=[raw_text])
+text = res[0]
+print(f'\nRaw recognized text: {raw_text}. \nText with capitalization and punctuation: {text}')
