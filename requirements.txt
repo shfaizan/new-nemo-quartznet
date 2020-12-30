@@ -1,5 +1,5 @@
 Cython
-nemo_toolkit[all]==1.0.0b1
+nemo_toolkit[all]
 kafka-python
 redis
 python-dotenv
